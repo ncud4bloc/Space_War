@@ -17,38 +17,56 @@ function startGame(){
 function updateGameArea(){
     gameArea.clear();
     
-    //earthShip.addThrust();
-    //alienShip.addThrust();
+    if ((gameArea.keys) && (gameArea.keys[83])){
+        earthShip.x += Math.cos(earthShip.angle);
+        earthShip.x1 += Math.cos(earthShip.angle);
+        earthShip.x2 += Math.cos(earthShip.angle);
+        earthShip.x3 += Math.cos(earthShip.angle);
+        earthShip.x4 += Math.cos(earthShip.angle);
+        earthShip.x5 += Math.cos(earthShip.angle);
+        earthShip.x6 += Math.cos(earthShip.angle);
+        earthShip.x7 += Math.cos(earthShip.angle);
+        earthShip.y += Math.sin(earthShip.angle);
+        earthShip.y1 += Math.sin(earthShip.angle);
+        earthShip.y2 += Math.sin(earthShip.angle);
+        earthShip.y3 += Math.sin(earthShip.angle);
+        earthShip.y4 += Math.sin(earthShip.angle);
+        earthShip.y5 += Math.sin(earthShip.angle);
+        earthShip.y6 += Math.sin(earthShip.angle);
+        earthShip.y7 += Math.sin(earthShip.angle);
+    }
 
-    // Temporary translations to confirm it works
-    earthShip.x1 += 0;
-    earthShip.x2 += 0;
-    earthShip.x3 += 0;
-    earthShip.x4 += 0;
-    earthShip.x5 += 0;
-    earthShip.x6 += 0;
-    earthShip.x7 += 0;
-
-    alienShip.x1 -= 0;
-    alienShip.x2 -= 0;
-    alienShip.x3 -= 0;
-    alienShip.x4 -= 0;
-    alienShip.x5 -= 0;
-    alienShip.x6 -= 0;
-    alienShip.x7 -= 0;
-    // End Temporary translations
-    //
+    if ((gameArea.keys) && (gameArea.keys[38])){
+        alienShip.x -= Math.cos(alienShip.angle);
+        alienShip.x1 -= Math.cos(alienShip.angle);
+        alienShip.x2 -= Math.cos(alienShip.angle);
+        alienShip.x3 -= Math.cos(alienShip.angle);
+        alienShip.x4 -= Math.cos(alienShip.angle);
+        alienShip.x5 -= Math.cos(alienShip.angle);
+        alienShip.x6 -= Math.cos(alienShip.angle);
+        alienShip.x7 -= Math.cos(alienShip.angle);
+        alienShip.y -= Math.sin(alienShip.angle);
+        alienShip.y1 -= Math.sin(alienShip.angle);
+        alienShip.y2 -= Math.sin(alienShip.angle);
+        alienShip.y3 -= Math.sin(alienShip.angle);
+        alienShip.y4 -= Math.sin(alienShip.angle);
+        alienShip.y5 -= Math.sin(alienShip.angle);
+        alienShip.y6 -= Math.sin(alienShip.angle);
+        alienShip.y7 -= Math.sin(alienShip.angle);
+    }
     
     sun.angle += 1 / 180 * Math.PI;
     
-    if ((gameArea.keys) && (gameArea.keys[90])){earthShip.angle -= 2 / 180 * Math.PI;}
-    if ((gameArea.keys) && (gameArea.keys[88])){earthShip.angle += 2 / 180 * Math.PI;}
+    if ((gameArea.keys) && (gameArea.keys[90])){earthShip.angle -= gameArea.angle;}
+    if ((gameArea.keys) && (gameArea.keys[88])){earthShip.angle += gameArea.angle;}
     if ((gameArea.keys) && (gameArea.keys[37])){alienShip.angle -= 2 / 180 * Math.PI;}
     if ((gameArea.keys) && (gameArea.keys[12])){alienShip.angle += 2 / 180 * Math.PI;}
     
     sun.update();
     earthShip.update();
+    //maintainSpeed(earthShip);
     alienShip.update();
+    maintainSpeed(alienShip);
     
     numI += 1;
 }
@@ -103,8 +121,8 @@ function MakeSun(sx,sy,color,joint){
 
 function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y,color,joint){
     this.angle = 0 / 180 * Math.PI; 
-    //this.accelX = cos(this.angle);
-    //this.accelY = sin(this.angle);
+    this.accelX = Math.cos(gameArea.angle);
+    this.accelY = Math.sin(gameArea.angle);
     this.x = px;
     this.y = py;
     this.x1 = p1x;
@@ -127,8 +145,8 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
       c = gameArea.context;
       c.save();                     
       c.translate(this.x, this.y);  
-      c.rotate(this.angle);          
-      c.translate(-this.x, -this.y); 
+      c.rotate(this.angle);  
+      c.translate(-this.x, -this.y);; 
       c.lineWidth = 2;
       c.strokeStyle = this.color;
       c.lineJoin = this.joint;
@@ -144,24 +162,42 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
       c.closePath();
       c.setTransform(1,0,0,1,0,0);   
     }   
-    this.addThrust = function(){
-        this.x += this.accelX;
-        this.y += this.accelY;
-        this.x1 += this.accelX;
-        this.y1 += this.accelY;
-        this.x2 += this.accelX;
-        this.y2 += this.accelY;
-        this.x3 += this.accelX;
-        this.y3 += this.accelY;
-        this.x4 += this.accelX;
-        this.y4 += this.accelY;
-        this.x5 += this.accelX;
-        this.y5 += this.accelY;
-        this.x6 += this.accelX;
-        this.y6 += this.accelY;
-        this.x7 += this.accelX;
-        this.y7 += this.accelY;
-    }
+}
+
+function maintainSpeed(ship){
+        this.angle = ship.angle;
+        this.x = ship.x;
+        this.x1 = ship.x1;
+        this.x2 = ship.x2;
+        this.x3 = ship.x3;
+        this.x4 = ship.x4;
+        this.x5 = ship.x5;
+        this.x6 = ship.x6;
+        this.x7 = ship.x7;
+        this.y = ship.y;
+        this.y1 = ship.y1;
+        this.y2 = ship.y2;
+        this.y3 = ship.y3;
+        this.y4 = ship.y4;
+        this.y5 = ship.y5;
+        this.y6 = ship.y6;
+        this.y7 = ship.y7;   
+        this.x += Math.cos(this.angle);
+        this.x1 += Math.cos(this.angle);
+        this.x2 += Math.cos(this.angle);
+        this.x3 += Math.cos(this.angle);
+        this.x4 += Math.cos(this.angle);
+        this.x5 += Math.cos(this.angle);
+        this.x6 += Math.cos(this.angle);
+        this.x7 += Math.cos(this.angle);
+        this.y += Math.sin(this.angle);
+        this.y1 += Math.sin(this.angle);
+        this.y2 += Math.sin(this.angle);
+        this.y3 += Math.sin(this.angle);
+        this.y4 += Math.sin(this.angle);
+        this.y5 += Math.sin(this.angle);
+        this.y6 += Math.sin(this.angle);
+        this.y7 += Math.sin(this.angle);
 }
 
 
@@ -178,10 +214,18 @@ var gameArea = {
       window.addEventListener('keydown', function (e) {
         gameArea.keys = (gameArea.keys || []);
         gameArea.keys[e.keyCode] = true;
+        gameArea.angle = 2 / 180 * Math.PI;;
       })
       window.addEventListener('keyup', function (e) {
         gameArea.keys[e.keyCode] = false;
-      })
+      })     
+/*      window.addEventListener('keyup', function (e) {
+          if((gameArea.keys[83]) || (gameArea.keys[38])){
+              gameArea.keys[e.keyCode] = true;
+          } else {
+              gameArea.keys[e.keyCode] = false;
+          }
+      }) */      
     },
     clear : function(){
       this.canvas.width = 900;
