@@ -11,7 +11,7 @@ function startGame(){
     gameArea.start();
     sun = new MakeSun(450,465,"#fcf31c","miter");
     earthShip = new Spaceship(75,300,100,300,80,295,60,290,70,300,60,310,80,305,100,300,"#15eb46","miter");
-    alienShip = new Spaceship(790,630,760,630,780,628,800,620,805,630,800,640,780,632,760,630,"#ffffff","round");
+    alienShip = new Spaceship(790,630,760,630,780,628,800,620,805,630,800,640,780,632,760,630,"#15eb46","round");
 }
 
 function updateGameArea(){
@@ -73,6 +73,8 @@ function MakeSun(sx,sy,color,joint){
     this.y7 = sy;
     this.x8 = sx-5;
     this.y8 = sy-5;
+    this.color = color;
+    this.joint = joint;
     this.update = function(){
       c = gameArea.context;
       c.save();
@@ -80,7 +82,9 @@ function MakeSun(sx,sy,color,joint){
       c.rotate(-this.angle);
       c.translate(-this.x, -this.y);
       c.lineWidth = 2;
-      c.lineJoin = joint;
+      c.strokeStyle = this.color;
+      c.lineJoin = this.joint;
+      c.beginPath();
       c.moveTo(this.x1, this.y1);
       c.lineTo(this.x2, this.y2);
       c.lineTo(this.x3, this.y3);
@@ -91,8 +95,8 @@ function MakeSun(sx,sy,color,joint){
       c.lineTo(this.x8, this.y8);
       c.lineTo(this.x1, this.y1);
       c.lineTo(this.x2, this.y2);
-      c.strokeStyle = color;
       c.stroke(); 
+      c.closePath();
       c.setTransform(1,0,0,1,0,0);
     }   
 }
@@ -117,6 +121,8 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
     this.y6 = p6y;
     this.x7 = p7x;
     this.y7 = p7y;
+    this.color = color;
+    this.joint = joint;
     this.update = function(){
       c = gameArea.context;
       c.save();                     
@@ -124,7 +130,9 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
       c.rotate(this.angle);          
       c.translate(-this.x, -this.y); 
       c.lineWidth = 2;
-      c.lineJoin = joint;
+      c.strokeStyle = this.color;
+      c.lineJoin = this.joint;
+      c.beginPath();
       c.moveTo(this.x1, this.y1);
       c.lineTo(this.x2, this.y2);
       c.lineTo(this.x3, this.y3);
@@ -132,8 +140,8 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
       c.lineTo(this.x5, this.y5);
       c.lineTo(this.x6, this.y6);
       c.lineTo(this.x7, this.y7);
-      c.strokeStyle = color;
       c.stroke(); 
+      c.closePath();
       c.setTransform(1,0,0,1,0,0);   
     }   
     this.addThrust = function(){
