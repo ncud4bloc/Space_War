@@ -4,6 +4,8 @@ var numI = 0;   // interval step count
 var sun;
 var earthShip;
 var alienShip;
+var earthShipLastAngle = 0;
+var alienShipLastAngle = 0;
 
 /* ---------------  Functions  --------------- */
 
@@ -34,6 +36,24 @@ function updateGameArea(){
         earthShip.y5 += Math.sin(earthShip.angle);
         earthShip.y6 += Math.sin(earthShip.angle);
         earthShip.y7 += Math.sin(earthShip.angle);
+        earthShipLastAngle = earthShip.angle;
+    } else if (gameArea.keys){
+        earthShip.x += Math.cos(earthShipLastAngle);
+        earthShip.x1 += Math.cos(earthShipLastAngle);
+        earthShip.x2 += Math.cos(earthShipLastAngle);
+        earthShip.x3 += Math.cos(earthShipLastAngle);
+        earthShip.x4 += Math.cos(earthShipLastAngle);
+        earthShip.x5 += Math.cos(earthShipLastAngle);
+        earthShip.x6 += Math.cos(earthShipLastAngle);
+        earthShip.x7 += Math.cos(earthShipLastAngle);
+        earthShip.y += Math.sin(earthShipLastAngle);
+        earthShip.y1 += Math.sin(earthShipLastAngle);
+        earthShip.y2 += Math.sin(earthShipLastAngle);
+        earthShip.y3 += Math.sin(earthShipLastAngle);
+        earthShip.y4 += Math.sin(earthShipLastAngle);
+        earthShip.y5 += Math.sin(earthShipLastAngle);
+        earthShip.y6 += Math.sin(earthShipLastAngle);
+        earthShip.y7 += Math.sin(earthShipLastAngle);  
     }
 
     if ((gameArea.keys) && (gameArea.keys[38])){
@@ -59,14 +79,14 @@ function updateGameArea(){
     
     if ((gameArea.keys) && (gameArea.keys[90])){earthShip.angle -= gameArea.angle;}
     if ((gameArea.keys) && (gameArea.keys[88])){earthShip.angle += gameArea.angle;}
-    if ((gameArea.keys) && (gameArea.keys[37])){alienShip.angle -= 2 / 180 * Math.PI;}
-    if ((gameArea.keys) && (gameArea.keys[12])){alienShip.angle += 2 / 180 * Math.PI;}
+    if ((gameArea.keys) && (gameArea.keys[37])){alienShip.angle -= gameArea.angle;}
+    if ((gameArea.keys) && (gameArea.keys[12])){alienShip.angle += gameArea.angle;}
     
     sun.update();
     earthShip.update();
     //maintainSpeed(earthShip);
     alienShip.update();
-    maintainSpeed(alienShip);
+    //maintainSpeed(alienShip);
     
     numI += 1;
 }
@@ -166,6 +186,7 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
 
 function maintainSpeed(ship){
         this.angle = ship.angle;
+    //console.log('Ship angle = ' + this.angle * 180 / Math.PI + ' degrees.');
         this.x = ship.x;
         this.x1 = ship.x1;
         this.x2 = ship.x2;
@@ -198,6 +219,7 @@ function maintainSpeed(ship){
         this.y5 += Math.sin(this.angle);
         this.y6 += Math.sin(this.angle);
         this.y7 += Math.sin(this.angle);
+    //console.log('Ship position = ' + this.x + 'x ' + this.y + 'y');
 }
 
 
@@ -214,10 +236,11 @@ var gameArea = {
       window.addEventListener('keydown', function (e) {
         gameArea.keys = (gameArea.keys || []);
         gameArea.keys[e.keyCode] = true;
-        gameArea.angle = 2 / 180 * Math.PI;;
+        gameArea.angle = 2 / 180 * Math.PI;
       })
       window.addEventListener('keyup', function (e) {
         gameArea.keys[e.keyCode] = false;
+        gameArea.angle = 0;
       })     
 /*      window.addEventListener('keyup', function (e) {
           if((gameArea.keys[83]) || (gameArea.keys[38])){
