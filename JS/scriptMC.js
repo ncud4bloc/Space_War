@@ -1,11 +1,17 @@
 /* ---------------  Variables  --------------- */
 
 var numI = 0;   // interval step count
+var decelCount = 0;
 var sun;
 var earthShip;
 var alienShip;
 var earthShipLastAngle = 0;
+//var earthShipLastDeltaX = [0];
+//var earthShipLastDeltaY = [0];
 var alienShipLastAngle = 0;
+//var alienShipLastDeltaX = [];
+//var alienShipLastDeltaY = [];
+var aFactor = 1.0;
 
 /* ---------------  Functions  --------------- */
 
@@ -19,60 +25,95 @@ function startGame(){
 function updateGameArea(){
     gameArea.clear();
     
+    /*
     if ((gameArea.keys) && (gameArea.keys[83])){
-        earthShip.x += Math.cos(earthShip.angle);
-        earthShip.x1 += Math.cos(earthShip.angle);
-        earthShip.x2 += Math.cos(earthShip.angle);
-        earthShip.x3 += Math.cos(earthShip.angle);
-        earthShip.x4 += Math.cos(earthShip.angle);
-        earthShip.x5 += Math.cos(earthShip.angle);
-        earthShip.x6 += Math.cos(earthShip.angle);
-        earthShip.x7 += Math.cos(earthShip.angle);
-        earthShip.y += Math.sin(earthShip.angle);
-        earthShip.y1 += Math.sin(earthShip.angle);
-        earthShip.y2 += Math.sin(earthShip.angle);
-        earthShip.y3 += Math.sin(earthShip.angle);
-        earthShip.y4 += Math.sin(earthShip.angle);
-        earthShip.y5 += Math.sin(earthShip.angle);
-        earthShip.y6 += Math.sin(earthShip.angle);
-        earthShip.y7 += Math.sin(earthShip.angle);
-        earthShipLastAngle = earthShip.angle;
+        earthShip.x += (Math.cos(earthShip.angle) * aFactor) + earthShip.residualX;
+        earthShip.x1 += (Math.cos(earthShip.angle) * aFactor) + earthShip.residualX;
+        earthShip.x2 += (Math.cos(earthShip.angle) * aFactor) + earthShip.residualX;
+        earthShip.x3 += (Math.cos(earthShip.angle) * aFactor) + earthShip.residualX;
+        earthShip.x4 += (Math.cos(earthShip.angle) * aFactor) + earthShip.residualX;
+        earthShip.x5 += (Math.cos(earthShip.angle) * aFactor) + earthShip.residualX;
+        earthShip.x6 += (Math.cos(earthShip.angle) * aFactor) + earthShip.residualX;
+        earthShip.x7 += (Math.cos(earthShip.angle) * aFactor) + earthShip.residualX;
+        earthShip.y += (Math.sin(earthShip.angle) * aFactor) + earthShip.residualY;
+        earthShip.y1 += (Math.sin(earthShip.angle) * aFactor) + earthShip.residualY;
+        earthShip.y2 += (Math.sin(earthShip.angle) * aFactor) + earthShip.residualY;
+        earthShip.y3 += (Math.sin(earthShip.angle) * aFactor) + earthShip.residualY;
+        earthShip.y4 += (Math.sin(earthShip.angle) * aFactor) + earthShip.residualY;
+        earthShip.y5 += (Math.sin(earthShip.angle) * aFactor) + earthShip.residualY;
+        earthShip.y6 += (Math.sin(earthShip.angle) * aFactor) + earthShip.residualY;
+        earthShip.y7 += (Math.sin(earthShip.angle) * aFactor) + earthShip.residualY;
+        earthShipLastAngle = earthShip.angle
+        decelCount ++;
+            if (decelCount <= 200){
+                earthShip.residualX -= 0.0005 * earthShipLastDeltaX[0];
+                earthShip.residualY -= 0.0005 * earthShipLastDeltaY[0];
+            } else {
+                earthShip.residualX = 0;
+                earthShip.residualY = 0;
+            }
     } else if (gameArea.keys){
-        earthShip.x += Math.cos(earthShipLastAngle);
-        earthShip.x1 += Math.cos(earthShipLastAngle);
-        earthShip.x2 += Math.cos(earthShipLastAngle);
-        earthShip.x3 += Math.cos(earthShipLastAngle);
-        earthShip.x4 += Math.cos(earthShipLastAngle);
-        earthShip.x5 += Math.cos(earthShipLastAngle);
-        earthShip.x6 += Math.cos(earthShipLastAngle);
-        earthShip.x7 += Math.cos(earthShipLastAngle);
-        earthShip.y += Math.sin(earthShipLastAngle);
-        earthShip.y1 += Math.sin(earthShipLastAngle);
-        earthShip.y2 += Math.sin(earthShipLastAngle);
-        earthShip.y3 += Math.sin(earthShipLastAngle);
-        earthShip.y4 += Math.sin(earthShipLastAngle);
-        earthShip.y5 += Math.sin(earthShipLastAngle);
-        earthShip.y6 += Math.sin(earthShipLastAngle);
-        earthShip.y7 += Math.sin(earthShipLastAngle);  
+        earthShipLastDeltaX.shift();
+        earthShipLastDeltaY.shift();
+        earthShip.x += Math.cos(earthShipLastAngle) * aFactor;
+        earthShip.x1 += Math.cos(earthShipLastAngle) * aFactor;
+        earthShip.x2 += Math.cos(earthShipLastAngle) * aFactor;
+        earthShip.x3 += Math.cos(earthShipLastAngle) * aFactor;
+        earthShip.x4 += Math.cos(earthShipLastAngle) * aFactor;
+        earthShip.x5 += Math.cos(earthShipLastAngle) * aFactor;
+        earthShip.x6 += Math.cos(earthShipLastAngle) * aFactor;
+        earthShip.x7 += Math.cos(earthShipLastAngle) * aFactor;
+        earthShip.y += Math.sin(earthShipLastAngle) * aFactor;
+        earthShip.y1 += Math.sin(earthShipLastAngle) * aFactor;
+        earthShip.y2 += Math.sin(earthShipLastAngle) * aFactor;
+        earthShip.y3 += Math.sin(earthShipLastAngle) * aFactor;
+        earthShip.y4 += Math.sin(earthShipLastAngle) * aFactor;
+        earthShip.y5 += Math.sin(earthShipLastAngle) * aFactor;
+        earthShip.y6 += Math.sin(earthShipLastAngle) * aFactor;
+        earthShip.y7 += Math.sin(earthShipLastAngle) * aFactor;
+        earthShipLastDeltaX.push(Math.cos(earthShipLastAngle));
+        earthShipLastDeltaY.push(Math.sin(earthShipLastAngle));
+        console.log('earthShip last angle = ' + earthShipLastAngle);
+        decelCount = 0;
+    }  
+    */
+    
+    if ((gameArea.keys) && (gameArea.keys[83])){
+        earthShip.x += (Math.cos(earthShip.angle) * aFactor);
+        earthShip.x1 += (Math.cos(earthShip.angle) * aFactor);
+        earthShip.x2 += (Math.cos(earthShip.angle) * aFactor);
+        earthShip.x3 += (Math.cos(earthShip.angle) * aFactor);
+        earthShip.x4 += (Math.cos(earthShip.angle) * aFactor);
+        earthShip.x5 += (Math.cos(earthShip.angle) * aFactor);
+        earthShip.x6 += (Math.cos(earthShip.angle) * aFactor);
+        earthShip.x7 += (Math.cos(earthShip.angle) * aFactor);
+        earthShip.y += (Math.sin(earthShip.angle) * aFactor);
+        earthShip.y1 += (Math.sin(earthShip.angle) * aFactor);
+        earthShip.y2 += (Math.sin(earthShip.angle) * aFactor);
+        earthShip.y3 += (Math.sin(earthShip.angle) * aFactor);
+        earthShip.y4 += (Math.sin(earthShip.angle) * aFactor);
+        earthShip.y5 += (Math.sin(earthShip.angle) * aFactor);
+        earthShip.y6 += (Math.sin(earthShip.angle) * aFactor);
+        earthShip.y7 += (Math.sin(earthShip.angle) * aFactor);
     }
 
     if ((gameArea.keys) && (gameArea.keys[38])){
-        alienShip.x -= Math.cos(alienShip.angle);
-        alienShip.x1 -= Math.cos(alienShip.angle);
-        alienShip.x2 -= Math.cos(alienShip.angle);
-        alienShip.x3 -= Math.cos(alienShip.angle);
-        alienShip.x4 -= Math.cos(alienShip.angle);
-        alienShip.x5 -= Math.cos(alienShip.angle);
-        alienShip.x6 -= Math.cos(alienShip.angle);
-        alienShip.x7 -= Math.cos(alienShip.angle);
-        alienShip.y -= Math.sin(alienShip.angle);
-        alienShip.y1 -= Math.sin(alienShip.angle);
-        alienShip.y2 -= Math.sin(alienShip.angle);
-        alienShip.y3 -= Math.sin(alienShip.angle);
-        alienShip.y4 -= Math.sin(alienShip.angle);
-        alienShip.y5 -= Math.sin(alienShip.angle);
-        alienShip.y6 -= Math.sin(alienShip.angle);
-        alienShip.y7 -= Math.sin(alienShip.angle);
+        alienShip.x -= (Math.cos(alienShip.angle) * aFactor);
+        alienShip.x1 -= (Math.cos(alienShip.angle) * aFactor);
+        alienShip.x2 -= (Math.cos(alienShip.angle) * aFactor);
+        alienShip.x3 -= (Math.cos(alienShip.angle) * aFactor);
+        alienShip.x4 -= (Math.cos(alienShip.angle) * aFactor);
+        alienShip.x5 -= (Math.cos(alienShip.angle) * aFactor);
+        alienShip.x6 -= (Math.cos(alienShip.angle) * aFactor);
+        alienShip.x7 -= (Math.cos(alienShip.angle) * aFactor);
+        alienShip.y -= (Math.sin(alienShip.angle) * aFactor);
+        alienShip.y1 -= (Math.sin(alienShip.angle) * aFactor);
+        alienShip.y2 -= (Math.sin(alienShip.angle) * aFactor);
+        alienShip.y3 -= (Math.sin(alienShip.angle) * aFactor);
+        alienShip.y4 -= (Math.sin(alienShip.angle) * aFactor);
+        alienShip.y5 -= (Math.sin(alienShip.angle) * aFactor);
+        alienShip.y6 -= (Math.sin(alienShip.angle) * aFactor);
+        alienShip.y7 -= (Math.sin(alienShip.angle) * aFactor);
     }
     
     sun.angle += 1 / 180 * Math.PI;
@@ -80,13 +121,11 @@ function updateGameArea(){
     if ((gameArea.keys) && (gameArea.keys[90])){earthShip.angle -= gameArea.angle;}
     if ((gameArea.keys) && (gameArea.keys[88])){earthShip.angle += gameArea.angle;}
     if ((gameArea.keys) && (gameArea.keys[37])){alienShip.angle -= gameArea.angle;}
-    if ((gameArea.keys) && (gameArea.keys[12])){alienShip.angle += gameArea.angle;}
+    if ((gameArea.keys) && (gameArea.keys[39])){alienShip.angle += gameArea.angle;}
     
     sun.update();
     earthShip.update();
-    //maintainSpeed(earthShip);
     alienShip.update();
-    //maintainSpeed(alienShip);
     
     numI += 1;
 }
@@ -143,6 +182,8 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
     this.angle = 0 / 180 * Math.PI; 
     this.accelX = Math.cos(gameArea.angle);
     this.accelY = Math.sin(gameArea.angle);
+    this.residualX = 0;
+    this.residualY = 0;
     this.x = px;
     this.y = py;
     this.x1 = p1x;
@@ -184,45 +225,6 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
     }   
 }
 
-function maintainSpeed(ship){
-        this.angle = ship.angle;
-    //console.log('Ship angle = ' + this.angle * 180 / Math.PI + ' degrees.');
-        this.x = ship.x;
-        this.x1 = ship.x1;
-        this.x2 = ship.x2;
-        this.x3 = ship.x3;
-        this.x4 = ship.x4;
-        this.x5 = ship.x5;
-        this.x6 = ship.x6;
-        this.x7 = ship.x7;
-        this.y = ship.y;
-        this.y1 = ship.y1;
-        this.y2 = ship.y2;
-        this.y3 = ship.y3;
-        this.y4 = ship.y4;
-        this.y5 = ship.y5;
-        this.y6 = ship.y6;
-        this.y7 = ship.y7;   
-        this.x += Math.cos(this.angle);
-        this.x1 += Math.cos(this.angle);
-        this.x2 += Math.cos(this.angle);
-        this.x3 += Math.cos(this.angle);
-        this.x4 += Math.cos(this.angle);
-        this.x5 += Math.cos(this.angle);
-        this.x6 += Math.cos(this.angle);
-        this.x7 += Math.cos(this.angle);
-        this.y += Math.sin(this.angle);
-        this.y1 += Math.sin(this.angle);
-        this.y2 += Math.sin(this.angle);
-        this.y3 += Math.sin(this.angle);
-        this.y4 += Math.sin(this.angle);
-        this.y5 += Math.sin(this.angle);
-        this.y6 += Math.sin(this.angle);
-        this.y7 += Math.sin(this.angle);
-    //console.log('Ship position = ' + this.x + 'x ' + this.y + 'y');
-}
-
-
 /* ---------------   Objects   --------------- */
 
 var gameArea = {
@@ -237,6 +239,7 @@ var gameArea = {
         gameArea.keys = (gameArea.keys || []);
         gameArea.keys[e.keyCode] = true;
         gameArea.angle = 2 / 180 * Math.PI;
+        gameArea.index = numI;
       })
       window.addEventListener('keyup', function (e) {
         gameArea.keys[e.keyCode] = false;
