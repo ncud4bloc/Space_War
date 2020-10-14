@@ -8,14 +8,15 @@ var sun;                            // central sun
 var earthShip;                      // good guys
 var earthShipAngle = 0;             // angle in radians earthShip is at when thrust is on
 var earthShipLastAngle = 0;         // angle in radians earthShip is at when thrust is turned off
-var shootE;                         // control for allowing earthship to shoot
-var torpedoE = [];
+var torpedoE = [];                  // used to create earthship torpedoes
 var numET = 0;                      // initial number of earthship torpedoes
 var earthTorpedoes = [];            // array of photon torpodoes fired by earthShip
 
 var alienShip;                      // bad guys
 var alienShipAngle = 0;             // angle in radians alienShip is at when thrust is on
 var alienShipLastAngle = 0;         // angle in radians alienShip is at when thrust is turned off
+var torpedoA = [];                  // used to create alienship torpedoes
+var numAT = 0;                      // initial number of alienship torpedoes
 var alienTorpedoes = [];            // array of photon torpodoes fired by alienShip
 
 var aFactor = 1.0;                  // factor used to increase/decrease ship rate of travel
@@ -30,10 +31,6 @@ function startGame(){
     sun = new MakeSun(450,465,"#fcf31c","miter");
     earthShip = new Spaceship(75,300,100,300,80,295,60,290,70,300,60,310,80,305,100,300,"#15eb46","miter",true);
     alienShip = new Spaceship(785,630,760,630,780,628,800,620,805,630,800,640,780,632,760,630,"#15eb46","round",true);
-    
-    //torpedoE = new makeTorpedo(earthTorpedoes,earthShip.x1,earthShip.y1,2,true,"#fff");
-    //torpedoE.addTorpedo();
-    //console.log('Earthship Torpedo Array First X: ' + earthTorpedoes[0].x);
 }
 
 function updateGameArea(){
@@ -131,9 +128,9 @@ function updateGameArea(){
     //----------------------
     sun.angle += 1 / 180 * Math.PI;
     
-    //------------------------
-    // Update Photon Torpodoes
-    //------------------------
+    //---------------------------------
+    // Update Photon Torpodoes Position
+    //---------------------------------
     if ((gameArea.keys) && (gameArea.keys[67]) && ((oneStepE[0] == numI) || (oneStepE[2] == numI) || (oneStepE[18] == numI))){
     //if ((gameArea.keys) && (gameArea.keys[67]) && ((shootE == true))){
         torpedoE[numET] =  new MakeTorpedo(earthTorpedoes,earthShip.x,earthShip.y,2,earthShip.angle,true,"#fff");
@@ -144,11 +141,6 @@ function updateGameArea(){
     for (var i = 0; i < earthTorpedoes.length; i++){
         earthTorpedoes[i].x += 25 * Math.cos(earthTorpedoes[i].angle) * tFactor;
         earthTorpedoes[i].y += 25 * Math.sin(earthTorpedoes[i].angle) * tFactor;
-        //console.log('number earthTorpedoes: ' + earthTorpedoes.length);
-        
-        // IF TORPEDO IS ACTIVE CALCULATE DISTANCE BY CALLING FUNCTION DISTANCE HERE.
-        // IF TORPEDO IS EXPLODING REMOVE IT BY MAKING ITS STATUS INACTIVE AND CALL 
-        // MakeShip.explode FOR AN ANIMATED SHIP EXPLOSION
         
         if(earthTorpedoes[i].active){
             var distToSun = distance(earthTorpedoes[i].x,earthTorpedoes[i].y, sun.x,sun.y);
@@ -180,23 +172,60 @@ function updateGameArea(){
         torpedoE[i].update();
     }
     
+    if ((gameArea.keys) && (gameArea.keys[45]) && ((oneStepA[0] == numI) || (oneStepA[2] == numI) || (oneStepA[18] == numI))){
+    //if ((gameArea.keys) && (gameArea.keys[45])){
+        torpedoA[numAT] =  new MakeTorpedo(alienTorpedoes,alienShip.x,alienShip.y,2,alienShip.angle,true,"#fff");
+        torpedoA[numAT].addTorpedo();
+        numAT ++;
+    }
+
+    for (var i = 0; i < alienTorpedoes.length; i++){
+        alienTorpedoes[i].x -= 25 * Math.cos(alienTorpedoes[i].angle) * tFactor;
+        alienTorpedoes[i].y -= 25 * Math.sin(alienTorpedoes[i].angle) * tFactor;
+        
+        if(alienTorpedoes[i].active){
+            var distToSun = distance(alienTorpedoes[i].x,alienTorpedoes[i].y, sun.x,sun.y);
+            var distToShip = distance(alienTorpedoes[i].x,alienTorpedoes[i].y,earthShip.x,earthShip.y);
+        }
+        
+        if(distToSun < 25){
+            alienTorpedoes[i].active = false;
+            alienTorpedoes[i].shift();
+        }
+        
+        if(distToShip < 25){
+            earthShip.active = false;
+            earthShip.x1 += 2;
+            earthShip.x2 += 1;
+            earthShip.y2 -= 2;
+            earthShip.x3 -= 1;
+            earthShip.y3 -= 2;
+            earthShip.x4 -= 2;
+            earthShip.x5 -= 1;
+            earthShip.y5 += 2;
+            earthShip.x6 += 1;
+            earthShip.y6 += 2;
+            //earthShip.explode();
+            alienTorpedoes[i].active = false;
+            alienTorpedoes.shift();
+        }
+        
+        torpedoA[i].update();
+    }    
+    
     //------------------------
-    // Update Spaceships & Sun
+    // Activitate updates
     //------------------------
     sun.update();
-    earthShip.update();
-    //alienShip.update();
     
-    //if (earthShip.active){
-    //    earthShip.update();
-    //    } else {
-    //    earthShip.explode();
-    //    }
+    if (earthShip.active){
+        earthShip.update();
+        } else {
+        earthShip.explode();
+        }
     if (alienShip.active){
-        console.log('Alien Ship Active');
         alienShip.update();
         } else {
-        console.log('Alien Ship Inactive');
         alienShip.explode();
         }
     
@@ -352,39 +381,6 @@ function MakeTorpedo(ship,x,y,radius,angle,active,color){
     }
 }
 
-function MakeTorpedoTEMP(x,y,radius,angle,active,color){
-    this.x = x;
-    this.y = y;
-    this.radius = radius;
-    this.angle = angle;
-    this.active = active;
-    this.color = color;
-    this.tFire = numI;
-    
-   // this.addTorpedo = function(){
-   //     this.push(this);
-   // }
-    this.addTorpedo = function(torpedoName){
-        this.ship = torpedoName;
-        this.ship.push(this);
-    }
-    
-    this.update = function(){
-        c = gameArea.context;
-        c.save();                     
-        c.translate(this.x, this.y);  
-        c.rotate(this.angle);  
-        c.translate(-this.x, -this.y);; 
-        c.beginPath();
-        c.fillStyle = this.color;
-        c.moveTo(this.x,this.y);
-        c.arc(this.x,this.y,this.radius,0,Math.PI*2,false);
-        c.fill();
-        c.closePath();
-        c.setTransform(1,0,0,1,0,0);
-    }
-}
-
 /* ------------- Other Functions ------------- */
 
 function distance(shipX,shipY,targetX,targetY){
@@ -408,7 +404,6 @@ var gameArea = {
         gameArea.index = numI;
         if(gameArea.keys[67]){  // this defines an earthship shooting event
           oneStepE.push(numI);
-          shootE = true;
         }
         if(gameArea.keys[45]){  // this defines an alienship shooting event
           oneStepA.push(numI);  
@@ -417,7 +412,6 @@ var gameArea = {
       window.addEventListener('keyup', function (e) {
         gameArea.keys[e.keyCode] = false;
         gameArea.angle = 0;
-        shootE = false;
       })
     },
     clear : function(){
