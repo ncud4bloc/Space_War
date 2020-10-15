@@ -2,6 +2,8 @@
 
 var round = 1;                      // Combat round (currently 3 per game)
 var killTime;                       // interval number (numI) at which a spaceship is destroyed
+var earthKills = 0;                 // number of times earthship destroys alienship
+var alienKills = 0;                 // number of times alienship destroys earthship
 var numI = 10;                      // interval step count used to time torpedo firing events
 var oneStepE = [];                  // used to reduce earthship event to a single interval step
 var oneStepA = [];                  // used to reduce alienship event to a single interval step
@@ -26,6 +28,9 @@ var tFactor = 1.0;                  // factor used to increase/decrease torpedo 
 
 function startGame(){
     gameArea.start();
+    if(round ==1){
+       alert('Welcome to Space Wars, where the player who takes the best out of three battles wins! \n \n The Earthship starts on the left side of the screen while the Alienship starts on the right.  \n \n Earth Controls: \n W - Forward \n A - Rotate CCW \n D - Rotate CW \n C - Fire Torpedo(s) \n \n Alien Controls: \n num 8 - Forward \n num 4 - Rotate CCW \n num 6 - Rotate CW \n num 0 - Fire Torpedo(s) \n \n Enjoy!');
+    }
     sun = new MakeSun(450,465,"#fcf31c","miter");
     earthShip = new Spaceship(75,300,100,300,80,295,60,290,70,300,60,310,80,305,100,300,"#15eb46","miter",true);
     alienShip = new Spaceship(785,630,760,630,780,628,800,620,805,630,800,640,780,632,760,630,"#15eb46","round",true);
@@ -37,7 +42,7 @@ function updateGameArea(){
     //----------------------
     // Update Ship Positions
     //----------------------
-    if ((earthShip.active) && (gameArea.keys) && (gameArea.keys[83])){
+    if ((earthShip.active) && (gameArea.keys) && (gameArea.keys[87])){
         earthShip.x += (Math.cos(earthShip.angle) * aFactor);
         earthShip.x1 += (Math.cos(earthShip.angle) * aFactor);
         earthShip.x2 += (Math.cos(earthShip.angle) * aFactor);
@@ -116,8 +121,8 @@ function updateGameArea(){
     //----------------------
     // Update Ship Rotations
     //----------------------
-    if ((earthShip.active) && (gameArea.keys) && (gameArea.keys[90])){earthShip.angle -= gameArea.angle;}
-    if ((earthShip.active) && (gameArea.keys) && (gameArea.keys[88])){earthShip.angle += gameArea.angle;}
+    if ((earthShip.active) && (gameArea.keys) && (gameArea.keys[65])){earthShip.angle -= gameArea.angle;}
+    if ((earthShip.active) && (gameArea.keys) && (gameArea.keys[68])){earthShip.angle += gameArea.angle;}
     if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[37])){alienShip.angle -= gameArea.angle;}
     if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[39])){alienShip.angle += gameArea.angle;}
     
@@ -168,10 +173,12 @@ function updateGameArea(){
     }
     
     if(earthShipDistToSun < 15){
+            killTime = numI;
             earthShip.active = false;
     }
     
     if(shipCollisionDist < 25){
+            killTime = numI;
             earthShip.active = false;
             alienShip.active = false;
     }
@@ -211,24 +218,42 @@ function updateGameArea(){
     }
     
     if(alienShipDistToSun < 15){
+            killTime = numI;
             alienShip.active = false;
     }
     
     //------------------------
-    // Reset / End the Game
-    //------------------------    
-    if ((round < 4) && (numI >= killTime + 500) && ((earthShip.active == false) || (alienShip.active == false))){
-        gameArea.stop();
-        gameArea.clear();
-        gameArea.start();
-        round ++;
-        console.log('End round ' + round);
-    } 
-    if ((round >= 4) && ((earthShip.active == false) || (alienShip.active == false))){
-        gameArea.clear();
-        gameArea.stop();
+    // Victory Conditions
+    //------------------------
+    
+    if(alienShip.active == false){
+        earthKills ++;
     }
-
+    
+    if(earthShip.active == false){
+        alienKills ++;
+    }
+    
+    //------------------------
+    // Reset / End the Game
+    //------------------------ 
+    
+    if ((round < 4) && (numI >= killTime + 400) && ((earthShip.active == false) || (alienShip.active == false))){
+        gameArea.stop();
+        gameArea.clear();
+        console.log('End round ' + round);
+        round ++;
+        startGame();
+    } 
+    
+    if (round >= 4){
+        gameArea.stop();
+        if(earthKills > alienKills){
+            alert('                  GAME OVER: EARTHSHIP WINS!!');
+        } else {
+            alert('                  GAME OVER: ALIENSHIP WINS!!');
+        }
+    }
     
     //------------------------
     // Activitate updates
@@ -371,38 +396,27 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
         c.moveTo(this.x1,this.y1);
         c.arc(this.x1,this.y1,this.radius,0,Math.PI*2,false);
         c.fill();
-        //c.closePath();
-        //c.beginPath();
         c.fillStyle = this.colorE;
         c.moveTo(this.x2,this.y2);
         c.arc(this.x2,this.y2,this.radius,0,Math.PI*2,false);
         c.fill();
-        //c.closePath();
-        //c.beginPath();
         c.fillStyle = this.colorE;
         c.moveTo(this.x3,this.y3);
         c.arc(this.x3,this.y3,this.radius,0,Math.PI*2,false);
         c.fill();
-        //c.closePath();
-        //c.beginPath();
         c.fillStyle = this.colorE;
         c.moveTo(this.x4,this.y4);
         c.arc(this.x4,this.y4,this.radius,0,Math.PI*2,false);
         c.fill();
-        //c.closePath();
-        //c.beginPath();
         c.fillStyle = this.colorE;
         c.moveTo(this.x5,this.y5);
         c.arc(this.x5,this.y5,this.radius,0,Math.PI*2,false);
         c.fill();
-        //c.closePath();
-        //c.beginPath();
         c.fillStyle = this.colorE;
         c.moveTo(this.x6,this.y3);
         c.arc(this.x6,this.y6,this.radius,0,Math.PI*2,false);
         c.fill();
         c.closePath();
-        //
         c.setTransform(1,0,0,1,0,0);
     }
 }
