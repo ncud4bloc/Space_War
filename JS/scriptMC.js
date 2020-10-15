@@ -1,27 +1,25 @@
 /* ---------------  Variables  --------------- */
 
-var numI = 0;                       // interval step count
+var round = 1;                      // Combat round (currently 3 per game)
+var killTime;                       // interval number (numI) at which a spaceship is destroyed
+var numI = 10;                      // interval step count used to time torpedo firing events
 var oneStepE = [];                  // used to reduce earthship event to a single interval step
 var oneStepA = [];                  // used to reduce alienship event to a single interval step
 var sun;                            // central sun
-
 var earthShip;                      // good guys
 var earthShipAngle = 0;             // angle in radians earthShip is at when thrust is on
 var earthShipLastAngle = 0;         // angle in radians earthShip is at when thrust is turned off
 var torpedoE = [];                  // used to create earthship torpedoes
 var numET = 0;                      // initial number of earthship torpedoes
 var earthTorpedoes = [];            // array of photon torpodoes fired by earthShip
-
 var alienShip;                      // bad guys
 var alienShipAngle = 0;             // angle in radians alienShip is at when thrust is on
 var alienShipLastAngle = 0;         // angle in radians alienShip is at when thrust is turned off
 var torpedoA = [];                  // used to create alienship torpedoes
 var numAT = 0;                      // initial number of alienship torpedoes
 var alienTorpedoes = [];            // array of photon torpodoes fired by alienShip
-
 var aFactor = 1.0;                  // factor used to increase/decrease ship rate of travel
 var coast = false;                  // used to allow/disallow continued ship travel after thrust is turned off
-
 var tFactor = 1.0;                  // factor used to increase/decrease torpedo rate of travel
 
 /* -----------  Gameplay Functions  ---------- */
@@ -131,8 +129,7 @@ function updateGameArea(){
     //---------------------------------
     // Update Photon Torpodoes Position
     //---------------------------------
-    if ((gameArea.keys) && (gameArea.keys[67]) && ((oneStepE[0] == numI) || (oneStepE[2] == numI) || (oneStepE[18] == numI))){
-    //if ((gameArea.keys) && (gameArea.keys[67]) && ((shootE == true))){
+    if ((gameArea.keys) && (gameArea.keys[67]) && (numI/10 == Math.floor(numI/10)) || (oneStepE[0] == numI)){
         torpedoE[numET] =  new MakeTorpedo(earthTorpedoes,earthShip.x,earthShip.y,2,earthShip.angle,true,"#fff");
         torpedoE[numET].addTorpedo();
         numET ++;
@@ -143,37 +140,43 @@ function updateGameArea(){
         earthTorpedoes[i].y += 25 * Math.sin(earthTorpedoes[i].angle) * tFactor;
         
         if(earthTorpedoes[i].active){
-            var distToSun = distance(earthTorpedoes[i].x,earthTorpedoes[i].y, sun.x,sun.y);
-            var distToShip = distance(earthTorpedoes[i].x,earthTorpedoes[i].y,alienShip.x,alienShip.y);
+            var distToSunET = distance(earthTorpedoes[i].x,earthTorpedoes[i].y, sun.x,sun.y);
+            var distToShipET = distance(earthTorpedoes[i].x,earthTorpedoes[i].y,alienShip.x,alienShip.y);
         }
         
-        if(distToSun < 25){
+        if(distToSunET < 25){
             earthTorpedoes[i].active = false;
-            earthTorpedoes[i].shift();
+            //earthTorpedoes[i].shift();
         }
         
-        if(distToShip < 25){
+        if(distToShipET < 30){
+            killTime = numI;
             alienShip.active = false;
-            alienShip.x1 += 2;
-            alienShip.x2 += 1;
-            alienShip.y2 -= 2;
-            alienShip.x3 -= 1;
-            alienShip.y3 -= 2;
-            alienShip.x4 -= 2;
-            alienShip.x5 -= 1;
-            alienShip.y5 += 2;
-            alienShip.x6 += 1;
-            alienShip.y6 += 2;
-            //alienShip.explode();
             earthTorpedoes[i].active = false;
-            earthTorpedoes.shift();
+            //earthTorpedoes.shift();
         }
         
         torpedoE[i].update();
     }
     
-    if ((gameArea.keys) && (gameArea.keys[45]) && ((oneStepA[0] == numI) || (oneStepA[2] == numI) || (oneStepA[18] == numI))){
-    //if ((gameArea.keys) && (gameArea.keys[45])){
+    if(earthShip.active){
+            var earthShipDistToSun = distance(earthShip.x,earthShip.y, sun.x,sun.y);
+    }
+    
+    if((earthShip.active) && (alienShip.active)){
+            var shipCollisionDist = distance(earthShip.x,earthShip.y, alienShip.x,alienShip.y);
+    }
+    
+    if(earthShipDistToSun < 15){
+            earthShip.active = false;
+    }
+    
+    if(shipCollisionDist < 25){
+            earthShip.active = false;
+            alienShip.active = false;
+    }
+    
+    if ((gameArea.keys) && (gameArea.keys[45]) && (numI/10 == Math.floor(numI/10)) || (oneStepA[0] == numI)){
         torpedoA[numAT] =  new MakeTorpedo(alienTorpedoes,alienShip.x,alienShip.y,2,alienShip.angle,true,"#fff");
         torpedoA[numAT].addTorpedo();
         numAT ++;
@@ -184,34 +187,48 @@ function updateGameArea(){
         alienTorpedoes[i].y -= 25 * Math.sin(alienTorpedoes[i].angle) * tFactor;
         
         if(alienTorpedoes[i].active){
-            var distToSun = distance(alienTorpedoes[i].x,alienTorpedoes[i].y, sun.x,sun.y);
-            var distToShip = distance(alienTorpedoes[i].x,alienTorpedoes[i].y,earthShip.x,earthShip.y);
+            var distToSunAT = distance(alienTorpedoes[i].x,alienTorpedoes[i].y, sun.x,sun.y);
+            var distToShipAT = distance(alienTorpedoes[i].x,alienTorpedoes[i].y,earthShip.x,earthShip.y);
         }
         
-        if(distToSun < 25){
+        if(distToSunAT < 25){
             alienTorpedoes[i].active = false;
-            alienTorpedoes[i].shift();
+            //alienTorpedoes[i].shift();
         }
         
-        if(distToShip < 25){
+        if(distToShipAT < 30){
+            killTime = numI;
             earthShip.active = false;
-            earthShip.x1 += 2;
-            earthShip.x2 += 1;
-            earthShip.y2 -= 2;
-            earthShip.x3 -= 1;
-            earthShip.y3 -= 2;
-            earthShip.x4 -= 2;
-            earthShip.x5 -= 1;
-            earthShip.y5 += 2;
-            earthShip.x6 += 1;
-            earthShip.y6 += 2;
-            //earthShip.explode();
             alienTorpedoes[i].active = false;
-            alienTorpedoes.shift();
+            //alienTorpedoes.shift();
         }
         
         torpedoA[i].update();
-    }    
+    } 
+    
+    if(alienShip.active){
+            var alienShipDistToSun = distance(alienShip.x,alienShip.y, sun.x,sun.y);
+    }
+    
+    if(alienShipDistToSun < 15){
+            alienShip.active = false;
+    }
+    
+    //------------------------
+    // Reset / End the Game
+    //------------------------    
+    if ((round < 4) && (numI >= killTime + 500) && ((earthShip.active == false) || (alienShip.active == false))){
+        gameArea.stop();
+        gameArea.clear();
+        gameArea.start();
+        round ++;
+        console.log('End round ' + round);
+    } 
+    if ((round >= 4) && ((earthShip.active == false) || (alienShip.active == false))){
+        gameArea.clear();
+        gameArea.stop();
+    }
+
     
     //------------------------
     // Activitate updates
@@ -331,6 +348,19 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
       c.setTransform(1,0,0,1,0,0);   
     }
     this.explode = function(){
+      this.x1 += 2;
+      this.x2 += 1;
+      this.y2 -= 2;
+      this.x3 -= 1;
+      this.y3 -= 2;
+      this.x4 -= 2;
+      this.x5 -= 1;
+      this.y5 += 2;
+      this.x6 += 1;
+      this.y6 += 2;
+      this.x7 += 2;
+      this.x8 += 1;
+      this.y8 -= 2;
         c = gameArea.context;
         c.save();                     
         c.translate(this.x, this.y);  
@@ -340,13 +370,39 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
         c.fillStyle = this.colorE;
         c.moveTo(this.x1,this.y1);
         c.arc(this.x1,this.y1,this.radius,0,Math.PI*2,false);
+        c.fill();
+        //c.closePath();
+        //c.beginPath();
+        c.fillStyle = this.colorE;
+        c.moveTo(this.x2,this.y2);
         c.arc(this.x2,this.y2,this.radius,0,Math.PI*2,false);
+        c.fill();
+        //c.closePath();
+        //c.beginPath();
+        c.fillStyle = this.colorE;
+        c.moveTo(this.x3,this.y3);
         c.arc(this.x3,this.y3,this.radius,0,Math.PI*2,false);
+        c.fill();
+        //c.closePath();
+        //c.beginPath();
+        c.fillStyle = this.colorE;
+        c.moveTo(this.x4,this.y4);
         c.arc(this.x4,this.y4,this.radius,0,Math.PI*2,false);
+        c.fill();
+        //c.closePath();
+        //c.beginPath();
+        c.fillStyle = this.colorE;
+        c.moveTo(this.x5,this.y5);
         c.arc(this.x5,this.y5,this.radius,0,Math.PI*2,false);
+        c.fill();
+        //c.closePath();
+        //c.beginPath();
+        c.fillStyle = this.colorE;
+        c.moveTo(this.x6,this.y3);
         c.arc(this.x6,this.y6,this.radius,0,Math.PI*2,false);
         c.fill();
         c.closePath();
+        //
         c.setTransform(1,0,0,1,0,0);
     }
 }
@@ -419,6 +475,9 @@ var gameArea = {
       this.canvas.height = 930;
       this.context = this.canvas.getContext("2d");
       document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+    },
+    stop : function() {
+      clearInterval(this.interval);
     }
 }
 
