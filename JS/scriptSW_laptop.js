@@ -60,7 +60,7 @@ function updateGameArea(){
         motion2(earthShip,earthShipLastAngle);
     }  
 
-    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[38])){
+    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[79])){
         thrustSound.play();
         motion1(alienShip,alienShipLastAngle);
         alienShipAngle = alienShip.angle;
@@ -74,8 +74,8 @@ function updateGameArea(){
     //----------------------
     if ((earthShip.active) && (gameArea.keys) && (gameArea.keys[65])){earthShip.angle -= gameArea.angle;}
     if ((earthShip.active) && (gameArea.keys) && (gameArea.keys[68])){earthShip.angle += gameArea.angle;}
-    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[37])){alienShip.angle -= gameArea.angle;}
-    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[39])){alienShip.angle += gameArea.angle;}
+    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[75])){alienShip.angle -= gameArea.angle;}
+    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[186])){alienShip.angle += gameArea.angle;}
     
     //----------------------
     // Update Sun Rotation
@@ -139,7 +139,7 @@ function updateGameArea(){
             alienShip.active = false;
     }
     
-    if ((gameArea.keys) && (gameArea.keys[45]) && (numI/10 == Math.floor(numI/10)) || (oneStepA[0] == numI)){
+    if ((gameArea.keys) && (gameArea.keys[77]) && (numI/10 == Math.floor(numI/10)) || (oneStepA[0] == numI)){
         shootSound.play();
         torpedoA[numAT] =  new MakeTorpedo(alienTorpedoes,alienShip.x,alienShip.y,2,alienShip.angle,true,"#fff");
         torpedoA[numAT].addTorpedo();
@@ -492,7 +492,7 @@ var gameArea = {
         if(gameArea.keys[67]){  // this defines an earthship shooting event
           oneStepE.push(numI);
         }
-        if(gameArea.keys[45]){  // this defines an alienship shooting event
+        if(gameArea.keys[77]){  // this defines an alienship shooting event
           oneStepA.push(numI);  
         }
       })
