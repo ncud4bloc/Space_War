@@ -35,8 +35,8 @@ function startGame(){
     if(round ==1){
        alert('Welcome to Space Wars, where the player who takes the best out of three battles wins! \n \n The Earthship starts on the left side of the screen while the Alienship starts on the right.  \n \n Earth Controls: \n W - Forward \n A - Rotate CCW \n D - Rotate CW \n C - Fire Torpedo(s) \n \n Alien Controls: \n num 8 - Forward \n num 4 - Rotate CCW \n num 6 - Rotate CW \n num 0 - Fire Torpedo(s) \n \n Enjoy!');
     }
-    sun = new MakeSun(450,465,"#fcf31c","miter");
-    sun2 = new MakeSun(450,465,"#fcf31c","miter");
+    sun = new MakeSun(450,465,20,"#fcf31c","miter");
+    sun2 = new MakeSun(450,465,30,"#fcf31c","miter");
     earthShip = new Spaceship(75,300,100,300,80,295,60,290,70,300,60,310,80,305,100,300,"#15eb46","miter",true,0,1);
     alienShip = new Spaceship(785,630,760,630,780,628,800,620,805,630,800,640,780,632,760,630,"#15eb46","round",true,0,-1);
     
@@ -235,23 +235,23 @@ function updateGameArea(){
 
 /* ---------  Constructor Functions  --------- */
 
-function MakeSun(sx,sy,color,joint){
+function MakeSun(sx,sy,rayL,color,joint){
     this.angle = 0 / 180 * Math.PI;
     this.x = sx;
     this.y = sy;
     this.x1 = sx;
-    this.y1 = sy-20;
+    this.y1 = sy-rayL;
     this.x2 = sx+5;
     this.y2 = sy-5;
-    this.x3 = sx+20;
+    this.x3 = sx+rayL;
     this.y3 = sy;
     this.x4 = sx+5;
     this.y4 = sy+5;
     this.x5 = sx;
-    this.y5 = sy+20;
+    this.y5 = sy+rayL;
     this.x6 = sx-5;
     this.y6 = sy+5;
-    this.x7 = sx-20;
+    this.x7 = sx-rayL;
     this.y7 = sy;
     this.x8 = sx-5;
     this.y8 = sy-5;

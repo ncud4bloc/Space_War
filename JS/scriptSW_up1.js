@@ -7,6 +7,7 @@ var alienKills = 0;                 // number of times alienship destroys earths
 var numI = 10;                      // interval step count used to time torpedo firing events
 var oneStepE = [];                  // used to reduce earthship event to a single interval step
 var oneStepA = [];                  // used to reduce alienship event to a single interval step
+var stars = [];                     // background stars
 var sun;                            // central sun
 var sun2;                           // second central sun (for graphic effects only)
 var earthShip;                      // good guys
@@ -24,6 +25,7 @@ var alienTorpedoes = [];            // array of photon torpodoes fired by alienS
 var aFactor = 1.0;                  // factor used to increase/decrease ship rate of travel
 var coast = false;                  // used to allow/disallow continued ship travel after thrust is turned off
 var tFactor = 1.0;                  // factor used to increase/decrease torpedo rate of travel
+var introSound;                     // sound to use at the opening of each combat
 var shootSound;                     // sound to use for shooting torpedoes
 var explodeSound;                   // sound to use for spaceship blowing up
 var thrustSound;                    // sound to use for moving spaceship
@@ -33,16 +35,24 @@ var thrustSound;                    // sound to use for moving spaceship
 function startGame(){
     gameArea.start();
     if(round ==1){
-       alert('Welcome to Space Wars, where the player who takes the best out of three battles wins! \n \n The Earthship starts on the left side of the screen while the Alienship starts on the right.  \n \n Earth Controls: \n W - Forward \n A - Rotate CCW \n D - Rotate CW \n C - Fire Torpedo(s) \n \n Alien Controls: \n num 8 - Forward \n num 4 - Rotate CCW \n num 6 - Rotate CW \n num 0 - Fire Torpedo(s) \n \n Enjoy!');
+       alert('Welcome to Space Wars, where the player who takes the best out of three battles wins! \n \n The Earthship starts on the left side of the screen while the Alienship starts on the right.  \n \n Earth Controls: \n W - Forward \n A - Rotate CCW \n D - Rotate CW \n C - Fire Torpedo(s) \n \n Alien Controls: \n O - Forward \n K - Rotate CCW \n ; - Rotate CW \n M - Fire Torpedo(s) \n \n Enjoy!');
     }
-    sun = new MakeSun(450,465,20,"#fcf31c","miter");
-    sun2 = new MakeSun(450,465,30,"#fcf31c","miter");
-    earthShip = new Spaceship(75,300,100,300,80,295,60,290,70,300,60,310,80,305,100,300,"#15eb46","miter",true,0,1);
-    alienShip = new Spaceship(785,630,760,630,780,628,800,620,805,630,800,640,780,632,760,630,"#15eb46","round",true,0,-1);
     
-    shootSound = new Sound("../SOUND/laserblast.mp3");
-    explodeSound = new Sound("../SOUND/explode.mp3");
-    thrustSound = new Sound("../SOUND/thrust.mp3");
+    for(var s = 0; s < 100; s++){
+       stars[s] = new MakeStars();  
+    }
+    sun = new MakeSun(600,465,20,"#fcf31c","miter");
+    sun2 = new MakeSun(600,465,30,"#fcf31c","miter");
+    earthShip = new Spaceship(75,300,100,300,80,295,60,290,70,300,60,310,80,305,100,300,"#15eb46","miter",true,0,1);
+    alienShip = new Spaceship(1085,630,1060,630,1080,628,1100,620,1105,630,1100,640,1080,632,1060,630,"#15eb46","round",true,0,-1);
+    
+    // All Soundfiles Sourced From zapsplat.com
+    introSound = new Sound("../SOUND/Intro_Sound-space-rising-tone.mp3");
+    introSound.play();
+    shootSound = new Sound("../SOUND/zapsplat_science_fiction_gun_single_shot.mp3");
+    explodeSound = new Sound("../SOUND/zapsplat_explosion_massive_heavy.mp3");
+    //thrustSound = new Sound("../SOUND/zapsplat_JetA10Engine_0006.mp3");
+    thrustSound = new Sound("../SOUND/ncc_engine_1sec_0001.mp3");
 }
 
 function updateGameArea(){
@@ -60,7 +70,7 @@ function updateGameArea(){
         motion2(earthShip,earthShipLastAngle);
     }  
 
-    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[38])){
+    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[79])){
         thrustSound.play();
         motion1(alienShip,alienShipLastAngle);
         alienShipAngle = alienShip.angle;
@@ -74,8 +84,8 @@ function updateGameArea(){
     //----------------------
     if ((earthShip.active) && (gameArea.keys) && (gameArea.keys[65])){earthShip.angle -= gameArea.angle;}
     if ((earthShip.active) && (gameArea.keys) && (gameArea.keys[68])){earthShip.angle += gameArea.angle;}
-    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[37])){alienShip.angle -= gameArea.angle;}
-    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[39])){alienShip.angle += gameArea.angle;}
+    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[75])){alienShip.angle -= gameArea.angle;}
+    if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[186])){alienShip.angle += gameArea.angle;}
     
     //----------------------
     // Update Sun Rotation
@@ -139,7 +149,7 @@ function updateGameArea(){
             alienShip.active = false;
     }
     
-    if ((gameArea.keys) && (gameArea.keys[45]) && (numI/10 == Math.floor(numI/10)) || (oneStepA[0] == numI)){
+    if ((gameArea.keys) && (gameArea.keys[77]) && (numI/10 == Math.floor(numI/10)) || (oneStepA[0] == numI)){
         shootSound.play();
         torpedoA[numAT] =  new MakeTorpedo(alienTorpedoes,alienShip.x,alienShip.y,2,alienShip.angle,true,"#fff");
         torpedoA[numAT].addTorpedo();
@@ -218,6 +228,9 @@ function updateGameArea(){
     //------------------------
     sun.update();
     sun2.update();
+    for(var s = 0; s < 100; s++){
+       stars[s].update();  
+    }
     
     if (earthShip.active){
         earthShip.update();
@@ -234,6 +247,27 @@ function updateGameArea(){
 }
 
 /* ---------  Constructor Functions  --------- */
+
+function MakeStars(){
+    this.x = Math.floor(Math.random() * 1200 + 1);
+    this.y = Math.floor(Math.random() * 930 + 1);
+    this.radius = Math.floor(Math.random() * 3 + 1);
+    this.color = '#fff';
+    this.update = function(){
+        c = gameArea.context;
+        c.save();                     
+        c.translate(this.x, this.y);  
+        c.rotate(this.angle);  
+        c.translate(-this.x, -this.y);; 
+        c.beginPath();
+        c.fillStyle = this.color;
+        c.moveTo(this.x,this.y);
+        c.arc(this.x,this.y,this.radius,0,Math.PI*2,false);
+        c.fill();
+        c.closePath();
+        c.setTransform(1,0,0,1,0,0);
+    }  
+}
 
 function MakeSun(sx,sy,rayL,color,joint){
     this.angle = 0 / 180 * Math.PI;
@@ -330,6 +364,9 @@ function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y
       c.lineTo(this.x6, this.y6);
       c.lineTo(this.x7, this.y7);
       c.stroke(); 
+      //c.fillStyle = this.color;
+      c.fillStyle = '#000';
+      c.fill();
       c.closePath();
       c.setTransform(1,0,0,1,0,0);   
     }
@@ -479,7 +516,7 @@ function distance(shipX,shipY,targetX,targetY){
 var gameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-      this.canvas.width = 900;
+      this.canvas.width = 1200;
       this.canvas.height = 930;
       this.context = this.canvas.getContext("2d");
       document.body.insertBefore(this.canvas, document.body.childNodes[0]);
@@ -492,7 +529,7 @@ var gameArea = {
         if(gameArea.keys[67]){  // this defines an earthship shooting event
           oneStepE.push(numI);
         }
-        if(gameArea.keys[45]){  // this defines an alienship shooting event
+        if(gameArea.keys[77]){  // this defines an alienship shooting event
           oneStepA.push(numI);  
         }
       })
@@ -502,7 +539,7 @@ var gameArea = {
       })
     },
     clear : function(){
-      this.canvas.width = 900;
+      this.canvas.width = 1200;
       this.canvas.height = 930;
       this.context = this.canvas.getContext("2d");
       document.body.insertBefore(this.canvas, document.body.childNodes[0]);
