@@ -41,10 +41,10 @@ function startGame(){
     for(var s = 0; s < 100; s++){
        stars[s] = new MakeStars();  
     }
-    sun = new MakeSun(600,465,20,"#fcf31c","miter");
-    sun2 = new MakeSun(600,465,30,"#fcf31c","miter");
-    earthShip = new Spaceship(75,300,100,300,80,295,60,290,70,300,60,310,80,305,100,300,"#15eb46","miter",true,0,1);
-    alienShip = new Spaceship(1085,630,1060,630,1080,628,1100,620,1105,630,1100,640,1080,632,1060,630,"#15eb46","round",true,0,-1);
+    sun = new MakeSun(600,465,15,"#fcf31c","miter");
+    sun2 = new MakeSun(600,465,25,"#fcf31c","miter");
+    earthShip = new Spaceship(75,300,100,300,80,295,60,290,70,300,60,310,80,305,100,300,"#0014ff","miter",true,0,1);
+    alienShip = new Spaceship(1085,630,1060,630,1080,628,1100,620,1105,630,1100,640,1080,632,1060,630,"#f24404","round",true,0,-1);
     
     // All Soundfiles Sourced From zapsplat.com
     introSound = new Sound("../SOUND/Intro_Sound-space-rising-tone.mp3");
@@ -98,7 +98,7 @@ function updateGameArea(){
     //---------------------------------
     if ((gameArea.keys) && (gameArea.keys[67]) && (numI/10 == Math.floor(numI/10)) || (oneStepE[0] == numI)){
         shootSound.play();
-        torpedoE[numET] =  new MakeTorpedo(earthTorpedoes,earthShip.x,earthShip.y,2,earthShip.angle,true,"#fff");
+        torpedoE[numET] =  new MakeTorpedo(earthTorpedoes,earthShip.x,earthShip.y,2,earthShip.angle,true,"#0014ff");
         torpedoE[numET].addTorpedo();
         numET ++;
     }
@@ -151,7 +151,7 @@ function updateGameArea(){
     
     if ((gameArea.keys) && (gameArea.keys[77]) && (numI/10 == Math.floor(numI/10)) || (oneStepA[0] == numI)){
         shootSound.play();
-        torpedoA[numAT] =  new MakeTorpedo(alienTorpedoes,alienShip.x,alienShip.y,2,alienShip.angle,true,"#fff");
+        torpedoA[numAT] =  new MakeTorpedo(alienTorpedoes,alienShip.x,alienShip.y,2,alienShip.angle,true,"#f24404");
         torpedoA[numAT].addTorpedo();
         numAT ++;
     }
@@ -235,12 +235,12 @@ function updateGameArea(){
     if (earthShip.active){
         earthShip.update();
         } else {
-        earthShip.explode('#f803ef');
+        earthShip.explode('#0014ff');
         }
     if (alienShip.active){
         alienShip.update();
         } else {
-        alienShip.explode('#04cdf2');
+        alienShip.explode('#f24404');
         }
     
     numI ++;
