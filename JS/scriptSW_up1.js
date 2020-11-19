@@ -23,7 +23,7 @@ var torpedoA = [];                  // used to create alienship torpedoes
 var numAT = 0;                      // initial number of alienship torpedoes
 var alienTorpedoes = [];            // array of photon torpodoes fired by alienShip
 var aFactor = 1.0;                  // factor used to increase/decrease ship rate of travel
-var coast = false;                  // used to allow/disallow continued ship travel after thrust is turned off
+var coast = true;                  // used to allow/disallow continued ship travel after thrust is turned off
 var tFactor = 1.0;                  // factor used to increase/decrease torpedo rate of travel
 var introSound;                     // sound to use at the opening of each combat
 var shootSound;                     // sound to use for shooting torpedoes
@@ -32,7 +32,7 @@ var thrustSound;                    // sound to use for moving spaceship
 
 /* -----------  Gameplay Functions  ---------- */
 
-alert('Click Left Mouse Button to Begin');
+alert('Click Left Mouse Button on Black Screen to Begin');
 
 function startGame(){
     gameArea.start();
@@ -77,7 +77,7 @@ function updateGameArea(){
         alienShipAngle = alienShip.angle;
     } else if ((alienShip.active) && (gameArea.keys) && (coast == true)){
         alienShipLastAngle = alienShipAngle;
-        motion2(alienShip);
+        motion2(alienShip,alienShipLastAngle);
     }  
     
     //----------------------
@@ -487,23 +487,24 @@ function motion1(ship){
 }
 
 function motion2(ship,shipAngle){
-    this.angle = shipAngle.angle;
-    this.ship.x += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x1 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x2 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x3 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x4 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x5 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x6 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x7 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y1 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y2 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y3 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y4 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y5 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y6 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y7 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
+    this.ship = ship;
+    this.angle = shipAngle;
+    this.ship.x += Math.cos(this.angle) * aFactor * this.ship.vector;
+    this.ship.x1 += Math.cos(this.angle) * aFactor * this.ship.vector;
+    this.ship.x2 += Math.cos(this.angle) * aFactor * this.ship.vector;
+    this.ship.x3 += Math.cos(this.angle) * aFactor * this.ship.vector;
+    this.ship.x4 += Math.cos(this.angle) * aFactor * this.ship.vector;
+    this.ship.x5 += Math.cos(this.angle) * aFactor * this.ship.vector;
+    this.ship.x6 += Math.cos(this.angle) * aFactor * this.ship.vector;
+    this.ship.x7 += Math.cos(this.angle) * aFactor * this.ship.vector;
+    this.ship.y += Math.sin(this.angle) * aFactor * this.ship.vector;
+    this.ship.y1 += Math.sin(this.angle) * aFactor * this.ship.vector;
+    this.ship.y2 += Math.sin(this.angle) * aFactor * this.ship.vector;
+    this.ship.y3 += Math.sin(this.angle) * aFactor * this.ship.vector;
+    this.ship.y4 += Math.sin(this.angle) * aFactor * this.ship.vector;
+    this.ship.y5 += Math.sin(this.angle) * aFactor * this.ship.vector;
+    this.ship.y6 += Math.sin(this.angle) * aFactor * this.ship.vector;
+    this.ship.y7 += Math.sin(this.angle) * aFactor * this.ship.vector;
 }
 
 /* ------------- Other Functions ------------- */
