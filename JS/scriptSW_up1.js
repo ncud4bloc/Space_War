@@ -66,19 +66,21 @@ function updateGameArea(){
         thrustSound.play();
         motion1(earthShip);
         earthShipAngle = earthShip.angle;
-    } else if ((earthShip.active) && (gameArea.keys) && (coast == true)){
+    } /* else if ((earthShip.active) && (gameArea.keys) && (coast == true)){
         earthShipLastAngle = earthShipAngle;
+        //motion1(earthShip);
         motion2(earthShip,earthShipLastAngle);
-    }  
+    }  */
 
     if ((alienShip.active) && (gameArea.keys) && (gameArea.keys[79])){
         thrustSound.play();
-        motion1(alienShip,alienShipLastAngle);
+        motion1(alienShip);
         alienShipAngle = alienShip.angle;
-    } else if ((alienShip.active) && (gameArea.keys) && (coast == true)){
+    } /* else if ((alienShip.active) && (gameArea.keys) && (coast == true)){
         alienShipLastAngle = alienShipAngle;
+        //motion1(alienShip);
         motion2(alienShip,alienShipLastAngle);
-    }  
+    }  */
     
     //----------------------
     // Update Ship Rotations
@@ -211,6 +213,12 @@ function updateGameArea(){
     if ((round < 4) && (numI >= killTime + 400) && ((earthShip.active == false) || (alienShip.active == false))){
         gameArea.stop();
         gameArea.clear();
+        
+        earthShip.active = false;
+        earthShipAngle = 0;
+        alienShip.active = false;
+        alienShipAngle = 0;
+        
         round ++;
         startGame();
     } 
