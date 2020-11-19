@@ -23,16 +23,15 @@ var torpedoA = [];                  // used to create alienship torpedoes
 var numAT = 0;                      // initial number of alienship torpedoes
 var alienTorpedoes = [];            // array of photon torpodoes fired by alienShip
 var aFactor = 1.0;                  // factor used to increase/decrease ship rate of travel
-var coast = false;                  // used to allow/disallow continued ship travel after thrust is turned off
+var coastE = false;                 // used to allow/disallow continued earthShip travel after thrust is turned off
+var coastA = false;                 // used to allow/disallow continued alienShip travel after thrust is turned off
 var tFactor = 1.0;                  // factor used to increase/decrease torpedo rate of travel
-var introSound;                     // sound to use at the opening of each combat
+//var introSound;                     // sound to use at the opening of each combat
 var shootSound;                     // sound to use for shooting torpedoes
 var explodeSound;                   // sound to use for spaceship blowing up
 var thrustSound;                    // sound to use for moving spaceship
 
 /* -----------  Gameplay Functions  ---------- */
-
-alert('Click Left Mouse Button to Begin');
 
 function startGame(){
     gameArea.start();
@@ -49,8 +48,8 @@ function startGame(){
     alienShip = new Spaceship(1085,630,1060,630,1080,628,1100,620,1105,630,1100,640,1080,632,1060,630,"#f24404","round",true,0,-1);
     
     // All Soundfiles Sourced From zapsplat.com
-    introSound = new Sound("../SOUND/Intro_Sound-space-rising-tone.mp3");
-    introSound.play();
+   // introSound = new Sound("../SOUND/Intro_Sound-space-rising-tone.mp3");
+    //introSound.play();
     shootSound = new Sound("../SOUND/zapsplat_science_fiction_gun_single_shot.mp3");
     explodeSound = new Sound("../SOUND/zapsplat_explosion_massive_heavy.mp3");
     thrustSound = new Sound("../SOUND/ncc_engine_1sec_0001.mp3");
@@ -66,8 +65,10 @@ function updateGameArea(){
         thrustSound.play();
         motion1(earthShip);
         earthShipAngle = earthShip.angle;
-    } else if ((earthShip.active) && (gameArea.keys) && (coast == true)){
+    } else if ((earthShip.active) && (coastE == true)){
+    //} else if ((earthShip.active) && (gameArea.keys) && (coast == true)){
         earthShipLastAngle = earthShipAngle;
+        //console.log('EarthShip angle = ' + earthShipLastAngle);
         motion2(earthShip,earthShipLastAngle);
     }  
 
@@ -75,9 +76,10 @@ function updateGameArea(){
         thrustSound.play();
         motion1(alienShip,alienShipLastAngle);
         alienShipAngle = alienShip.angle;
-    } else if ((alienShip.active) && (gameArea.keys) && (coast == true)){
+    } else if ((alienShip.active) && (coastA == true)){
+    //} else if ((alienShip.active) && (gameArea.keys) && (coast == true)){
         alienShipLastAngle = alienShipAngle;
-        motion2(alienShip);
+        motion2(alienShip,alienShipLastAngle);
     }  
     
     //----------------------
@@ -193,6 +195,14 @@ function updateGameArea(){
     }
     
     //------------------------
+    // Keep Spaceships on Screen
+    //------------------------
+    
+    if((earthShip.x == 10) || (earthShip.x == 1190)){
+        earthShip.angle *= -1;
+    }
+    
+    //------------------------
     // Victory Conditions
     //------------------------
     
@@ -211,6 +221,8 @@ function updateGameArea(){
     if ((round < 4) && (numI >= killTime + 400) && ((earthShip.active == false) || (alienShip.active == false))){
         gameArea.stop();
         gameArea.clear();
+       // earthShipLastAngle = 0;
+       // alienShipLastAngle = 0;
         round ++;
         startGame();
     } 
@@ -322,11 +334,12 @@ function MakeSun(sx,sy,rayL,color,joint){
 
 function Spaceship(px,py,p1x,p1y,p2x,p2y,p3x,p3y,p4x,p4y,p5x,p5y,p6x,p6y,p7x,p7y,color,joint,active,angle,vector){
     this.angle = angle / 180 * Math.PI;
+    this.noThrustAngle = 0;
     this.vector = vector;
-    this.accelX = Math.cos(gameArea.angle);
-    this.accelY = Math.sin(gameArea.angle);
-    this.residualX = 0;
-    this.residualY = 0;
+    //this.accelX = Math.cos(gameArea.angle);
+    //this.accelY = Math.sin(gameArea.angle);
+    //this.residualX = 0;
+    //this.residualY = 0;
     this.x = px;
     this.y = py;
     this.x1 = p1x;
@@ -487,24 +500,49 @@ function motion1(ship){
 }
 
 function motion2(ship,shipAngle){
-    this.angle = shipAngle.angle;
-    this.ship.x += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x1 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x2 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x3 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x4 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x5 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x6 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.x7 += Math.cos(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y1 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y2 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y3 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y4 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y5 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y6 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
-    this.ship.y7 += Math.sin(shipAngle.angle) * aFactor * this.ship.vector;
+    this.ship = ship;
+    this.noThrustAngle = shipAngle;
+    this.angle = this.ship.angle;
+    this.ship.x += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.x1 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.x2 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.x3 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.x4 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.x5 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.x6 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.x7 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.y += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.y1 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.y2 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.y3 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.y4 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.y5 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.y6 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
+    this.ship.y7 += Math.cos(this.noThrustAngle) * aFactor * this.ship.vector;
 }
+/*
+function motion2(ship,shipAngle){
+    this.ship = ship;
+    this.noThrustAngle = shipAngle;
+    this.angle = this.ship.angle;
+    this.ship.x += Math.cos((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.x1 += Math.cos((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.x2 += Math.cos((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.x3 += Math.cos((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.x4 += Math.cos((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.x5 += Math.cos((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.x6 += Math.cos((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.x7 += Math.cos((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.y += Math.sin((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.y1 += Math.sin((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.y2 += Math.sin((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.y3 += Math.sin((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.y4 += Math.sin((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.y5 += Math.sin((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.y6 += Math.sin((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+    this.ship.y7 += Math.sin((this.ship.angle + this.noThrustAngle)/2) * aFactor * this.ship.vector;
+}
+*/
 
 /* ------------- Other Functions ------------- */
 
@@ -529,14 +567,26 @@ var gameArea = {
         gameArea.index = numI;
         if(gameArea.keys[67]){  // this defines an earthship shooting event
           oneStepE.push(numI);
+          coastE = false;
         }
         if(gameArea.keys[77]){  // this defines an alienship shooting event
-          oneStepA.push(numI);  
+          oneStepA.push(numI);
+          coastA = false;
         }
       })
       window.addEventListener('keyup', function (e) {
+        //gameArea.keys = (gameArea.keys || []);
         gameArea.keys[e.keyCode] = false;
-        gameArea.angle = 0;
+        //gameArea.angle = 0;
+        if(gameArea.keys[65,68,87]){
+        //if(gameArea.keys[87]){
+            coastE = true;
+            console.log('earthShip thrust keyup with coastE = ' +coastE);
+        }
+        if(gameArea.keys[79]){
+            coastA = true;
+            console.log('alienShip thrust keyup with coastA = ' +coastA);
+        }
       })
     },
     clear : function(){
@@ -552,5 +602,4 @@ var gameArea = {
 
 window.addEventListener('click', function (e) {
     startGame();
-})
-//startGame();
+}
